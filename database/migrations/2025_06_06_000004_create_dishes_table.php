@@ -23,8 +23,6 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
-            #$table->foreignId('category_id')->onDelete('cascade');
-            #$table->foreignId('files_id')->onDelete('cascade');
         });
     }
 
