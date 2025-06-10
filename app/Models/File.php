@@ -11,6 +11,7 @@ class File extends Model
     {
         return $this->hasOne(Category::class);
     }
+
     public function dish(): HasOne
     {
         return $this->hasOne(Dish::class);

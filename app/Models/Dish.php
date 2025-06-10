@@ -12,10 +12,12 @@ class Dish extends Model
     {
         return $this->belongsTo(File::class);
     }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
+
     public function orders(): BelongsToMany
     {
         return $this->belongsToMany(Order::class)->withPivot('quantity');

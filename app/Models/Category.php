@@ -12,6 +12,7 @@ class Category extends Model
     {
         return $this->belongsTo(File::class);
     }
+
     public function dish(): HasMany
     {
         return $this->hasMany(Dish::class);

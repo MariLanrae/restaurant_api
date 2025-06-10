@@ -12,6 +12,7 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+
     public function dishes(): BelongsToMany
     {
         return $this->belongsToMany(Dish::class);
