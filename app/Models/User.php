@@ -13,8 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
-    use SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes;
 
     public $table = 'users';
 
@@ -54,10 +53,12 @@ class User extends Authenticatable
             'pincode' => 'hashed',
         ];
     }
+
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
+
     public function order(): HasMany
     {
         return $this->hasMany(Order::class);
