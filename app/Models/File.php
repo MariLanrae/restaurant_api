@@ -8,9 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class File extends Model
 {
     public $table = 'files';
-    protected $fillable = [
-        'path',
-    ];
+
+    protected $fillable = ['path'];
 
     public function category(): HasOne
     {
