@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dishes_orders', function (Blueprint $table) {
-            $table->unsignedBigInteger('dishes_id');
-            $table->foreign('dishes_id')->references('id')->on('dishes')->onDelete('set null');
+        Schema::create('dish_order', function (Blueprint $table) {
+            $table->unsignedBigInteger('dish_id');
+            $table->foreign('dish_id')->references('id')->on('dishes')->onDelete('set null');
             $table->unsignedBigInteger('order_id');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->integer('quantity');
-            #$table->foreignId('order_id')->onDelete('cascade');
-            #$table->foreignId('dishes_id')->onDelete('set null');
-            #$table->timestamps();
         });
     }
 

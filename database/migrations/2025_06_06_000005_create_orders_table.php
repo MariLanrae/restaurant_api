@@ -19,7 +19,6 @@ return new class extends Migration
             $table->enum('status', ['open','closed','canceled','paid']);
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            #$table->foreignId('user_id')->index()->onDelete('cascade');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });

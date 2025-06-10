@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('dishes', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
-            $table->unsignedBigInteger('files_id');
-            $table->foreign('files_id')->references('id')->on('files');
+            $table->unsignedBigInteger('file_id');
+            $table->foreign('file_id')->references('id')->on('files');
             $table->text('compound')->index();
             $table->integer('calories')->index();
             $table->decimal('price',10,2)->index();
@@ -23,8 +23,6 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
-            #$table->foreignId('category_id')->onDelete('cascade');
-            #$table->foreignId('files_id')->onDelete('cascade');
         });
     }
 
