@@ -3,75 +3,67 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
+use App\Http\Resources\OrderResource;
+use  App\Http\Requests\OrderRequest;
 
 class OrderController extends Controller
 {
-    public function index(): JsonResponse
-    {
-        $order = Order::all();
-        return response()->json($order);
-    }
 
-    public function index_sort(Request $request): JsonResponse
+    public function index_sort(OrderRequest $request)
     {
         $users = Order::all();
-        if ($request->has('number')){
-            $users = $users->sortBy('number');
+        if (isset ($request['number'])){
+            $users = $users->sortBy('number', $request['sort_order']);
         }
-        elseif ($request->has('closing_date')){
-            $users = $users->sortBy('closing_date');
+        elseif (isset ($request['closing_date'])){
+            $users = $users->sortBy('closing_date', $request['sort_order']);
         }
-        elseif ($request->has('user_id')){
-            $users = $users->sortBy('user_id');
+        elseif (isset ($request['user_id'])){
+            $users = $users->sortBy('user_id', $request['sort_order']);
         }
 
-        return response()->json($users);
+        return OrderResource::collection($users);
     }
 
-    public function index_search(Request $request): JsonResponse
+    public function index_search(OrderRequest $request)
     {
         $order = Order::all();
-        if ($request->has('number')) {
-            $search = $request->input('number');
-            $order->where('number', 'like', $search);
+        if (isset ($request['number'])) {
+            $order->where('number', 'like', $request['number']);
         }
-        elseif ($request->has('closing_date')) {
-            $search = $request->input('closing_date');
-            $order->where('closing_date', 'like', $search);
+        elseif (isset ($request['closing_date'])) {
+            $order->where('closing_date', 'like', $request['closing_date']);
         }
-        elseif ($request->has('user_id')) {
-            $search = $request->input('user_id');
-            $order->where('user_id', 'like', $search);
+        elseif (isset ($request['user_id'])) {
+            $order->where('user_id', 'like', $request['user_id']);
         }
 
-        return response()->json($order);
+        return OrderResource::collection($order);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(OrderRequest $request): OrderResource
     {
         $order = Order::create($request->all());
 
-        return response()->json($order);
+        return new OrderResource($order);
     }
 
-    public function show(Order $order): JsonResponse
+    public function show(Order $order): OrderResource
     {
-        return response()->json($order);
+        return new OrderResource($order);
     }
 
-    public function update(Request $request, Order $order): JsonResponse
+    public function update(OrderRequest $request, Order $order): OrderResource
     {
         $order->update($request->all());
 
-        return response()->json($order);
+        return new OrderResource($order);
     }
 
-    public function destroy(Order $order): JsonResponse
+    public function destroy(Order $order): OrderResource
     {
         $order->delete();
 
-        return response()->json($order->delete_at);
+        return new OrderResource($order['deleted_at']);
     }
 }

@@ -4,61 +4,60 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\File;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\CategoryResource;
+use  App\Http\Requests\CategoryRequest;
 
 class CategoryController extends Controller
 {
 
-    public function index(Request $request): JsonResponse
+    public function index(CategoryRequest $request)
     {
         $category = Category::all();
-        if ($request->has('sort')) {
-            $category = $category->sortBy('title');
+
+        if (isset ($request['sort'])) {
+            $category = $category->sortBy('title',  $request['sort_order']);
         }
-        elseif ($request->has('search')){
-            $search = $request->input('title');
-            $category->where('title', 'like', $search);
+        elseif (isset($val['search'])) {
+            $category->where('title', 'like', $request['title']);
         }
-        return response()->json($category);
+
+        return CategoryResource::collection($category);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(CategoryRequest $request): CategoryResource
     {
         $path = $request->file('file')->store('uploads', 'public');
-
         File::create(['path' => $path]);
-
         $category = Category::create($request->all());
 
-        return response()->json($category);
+        return new CategoryResource($category);
     }
 
-    public function show(Category $category): JsonResponse
+    public function show($id): CategoryResource
     {
-        return response()->json($category);
+        $category = Category::find($id);
+
+        return new CategoryResource($category);
     }
 
-    public function update(Request $request, Category $category): JsonResponse
+    public function update(CategoryRequest $request, Category $category): CategoryResource
     {
         $category->title = 'title';
         Storage::disk('public')->delete($category->file->path);
-
         $path = $request->file('file')->store('uploads', 'public');
-
         $category->file->path = $path;
 
-        return response()->json($category);
+        return new CategoryResource($category);
     }
 
-    public function destroy(Category $category): JsonResponse
+    public function destroy(Category $category): CategoryResource
     {
         $file = $category->file;
         Storage::disk('public')->delete($file->path);
         $file->delete();
         $category->delete();
 
-        return response()->json($category->delete_at);
+        return new CategoryResource($category['deleted_at']);
     }
 }

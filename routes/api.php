@@ -21,7 +21,7 @@ Route::get('/users/sort/{sort}', [UserController::class, 'index_sort'])->name('u
 
 Route::apiResource('roles', RoleController::class);
 
-Route::apiResource('orders', OrderController::class);
+Route::apiResource('orders', OrderController::class)->except('index');
 Route::get('/orders/search/{search}', [OrderController::class, 'index_search'])->name('orders.search');
 Route::get('/orders/sort/{sort}', [OrderController::class, 'index_sort'])->name('orders.sort');
 

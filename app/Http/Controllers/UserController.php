@@ -1,67 +1,66 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
+use App\Http\Resources\UserResource;
+use  App\Http\Requests\UserRequest;
 
 class UserController extends Controller
 {
-    public function index_sort(Request $request): JsonResponse
+    public function index_sort(UserRequest $request)
     {
         $users = User::all();
-        if ($request->has('name')){
-            $users = $users->sortBy('name');
+
+        if (isset ($request['name'])){
+            $users = $users->sortBy('name', $request['sort_order']);
         }
-        elseif ($request->has('role_id')){
-            $users = $users->sortBy('role_id');
+        elseif (isset ($request['role_id'])){
+            $users = $users->sortBy('role_id',  $request['sort_order']);
         }
 
-        return response()->json($users);
+        return UserResource::collection($users);
     }
 
-    public function index_search(Request $request): JsonResponse
+    public function index_search(UserRequest $request)
     {
         $user = User::all();
-        if ($request->has('name')) {
-            $search = $request->input('name');
-            $user->where('name', 'like', $search);
+
+        if (isset ($request['name'])) {
+            $user->where('name', 'like', $request['name']);
         }
-        elseif ($request->has('email')) {
-            $search = $request->input('email');
-            $user->where('email', 'like', $search);
+        elseif (isset ($request['email'])) {
+            $user->where('email', 'like', $request['email']);
         }
-        elseif ($request->has('role')) {
-            $search = $request->input('role');
-            $user->where('role', 'like', $search);
+        elseif (isset ($request['role_id'])) {
+            $user->where('role_id', 'like', $request['role_id']);
         }
-        return response()->json($user);
+
+        return UserResource::collection($user);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(UserRequest $request): UserResource
     {
         $user = User::create($request->all());
 
-        return response()->json($user);
+        return new UserResource($user);
     }
 
-    public function show(User $user): JsonResponse
+    public function show(User $user): UserResource
     {
-        return response()->json($user);
+        return new UserResource($user);
     }
 
-    public function update(Request $request, User $user): JsonResponse
+    public function update(UserRequest $request, User $user): UserResource
     {
         $user->update($request->all());
 
-        return response()->json($user);
+        return new UserResource($user);
     }
 
-    public function destroy(User $user): JsonResponse
+    public function destroy(User $user): UserResource
     {
         $user->delete();
 
-        return response()->json($user->delete_at);
+        return new UserResource($user['deleted_at']);
     }
 }

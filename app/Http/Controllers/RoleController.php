@@ -3,41 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Http\Resources\RoleResource;
+use  App\Http\Requests\RoleRequest;
 
 class RoleController extends Controller
 {
 
-    public function index(): JsonResponse
+    public function index()
     {
         $role = Role::all();
-        return response()->json($role);
+
+        return RoleResource::collection($role);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(RoleRequest $request): RoleResource
     {
         $role = Role::create($request->all());
 
-        return response()->json($role);
+        return new RoleResource($role);
     }
 
-    public function show(Role $role): JsonResponse
+    public function show(Role $role): RoleResource
     {
-        return response()->json($role);
+        return new RoleResource($role);
     }
 
-    public function update(Request $request, Role $role): JsonResponse
+    public function update(RoleRequest $request, Role $role): RoleResource
     {
         $role->update($request->all());
 
-        return response()->json($role);
+        return new RoleResource($role);
     }
 
-    public function destroy(Role $role): JsonResponse
+    public function destroy(Role $role): RoleResource
     {
         $role->delete();
 
-        return response()->json($role);
+        return new RoleResource($role);
     }
 }

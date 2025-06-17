@@ -4,82 +4,79 @@ namespace App\Http\Controllers;
 
 use App\Models\Dish;
 use App\Models\File;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\DishResource;
+use  App\Http\Requests\DishRequest;
 
 
 class DishController extends Controller
 {
 
-    public function index_sort(Request $request): JsonResponse
+    public function index_sort(DishRequest $request)
     {
         $dish = Dish::all();
-        if ($request->has('title')){
-            $dish = $dish->sortBy('title');
+
+        if (isset ($request['title'])){
+            $dish = $dish->sortBy('title', $request['sort_order']);
         }
-        elseif ($request->has('compound')){
-            $dish = $dish->sortBy('compound');
+        elseif (isset ($request['compound'])){
+            $dish = $dish->sortBy('compound', $request['sort_order']);
         }
-        elseif ($request->has('price')){
-            $dish = $dish->sortBy('price');
+        elseif (isset ($request['price'])){
+            $dish = $dish->sortBy('price', $request['sort_order']);
         }
-        elseif ($request->has('calories')){
-            $dish = $dish->sortBy('calories');
+        elseif (isset ($request['calories'])){
+            $dish = $dish->sortBy('calories', $request['sort_order']);
         }
 
-        return response()->json($dish);
+        return DishResource::collection($dish);
     }
 
-    public function index_search(Request $request): JsonResponse
+    public function index_search(DishRequest $request)
     {
         $dish = Dish::all();
-        if ($request->has('title')) {
-            $search = $request->input('title');
-            $dish->where('title', 'like', $search);
+
+        if (isset ($request['title'])) {
+            $dish->where('title', 'like', $request['title']);
         }
-        elseif ($request->has('compound')) {
-            $search = $request->input('compound');
-            $dish->where('compound', 'like', $search);
+        elseif (isset ($request['compound'])) {
+            $dish->where('compound', 'like', $request['compound']);
         }
-        return response()->json($dish);
+
+        return DishResource::collection($dish);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(DishRequest $request): DishResource
     {
         $path = $request->file('file')->store('uploads', 'public');
-
         File::create(['path' => $path]);
-
         $dish = Dish::create($request->all());
 
-        return response()->json($dish);
+        return new DishResource($dish);
     }
 
-    public function show(Dish $dish): JsonResponse
+    public function show(Dish $dish): DishResource
     {
-        return response()->json($dish);
+        return new DishResource($dish);
     }
 
-    public function update(Request $request, Dish $dish): JsonResponse
+    public function update(DishRequest $request, Dish $dish): DishResource
     {
         Storage::disk('public')->delete($dish->file->path);
-
         $path = $request->file('file')->store('uploads', 'public');
-
         $dish->update($request->all());
         $dish->update([$dish->file->path =  $path]);
 
-        return response()->json($dish);
+        return new DishResource($dish);
     }
 
-    public function destroy(Dish $dish): JsonResponse
+    public function destroy(Dish $dish): DishResource
     {
         $file = $dish->file;
         Storage::disk('public')->delete($file->path);
         $file->delete();
         $dish->delete();
 
-        return response()->json($dish->delete_at);
+        return new DishResource($dish['deleted_at']);
     }
 }
