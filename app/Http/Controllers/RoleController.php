@@ -18,19 +18,24 @@ class RoleController extends Controller
 
     public function store(RoleRequest $request): RoleResource
     {
-        $role = Role::create($request->all());
+        $validated = $request->validated();
+        $role = Role::create($validated->all());
 
         return new RoleResource($role);
     }
 
-    public function show(Role $role): RoleResource
+    public function show($id) //RoleResource
     {
+        $role = Role::findOrFail($id);
+
         return new RoleResource($role);
     }
 
     public function update(RoleRequest $request, Role $role): RoleResource
     {
-        $role->update($request->all());
+        $validated = $request->validated();
+
+        $role->update($validated->all());
 
         return new RoleResource($role);
     }

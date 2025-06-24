@@ -15,8 +15,12 @@ class DishResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'title' => $this->title,
-            'file' => $this->whenLoaded('file'),
+            'file' => $this->file->id,
+            'category_id' => $this->category->id,
+            'calories' => $this->calories,
+            'price' => $this->price,
             'compound' => $this->compound,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -11,7 +11,7 @@ class UserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,22 +23,22 @@ class UserRequest extends FormRequest
     {
         return match ($this->method()){
             'POST' => [
-                'name' => 'sometimes|string',
-                'email' => 'sometimes|email|unique:users',
-                'role_id' => 'sometimes|exists:roles,id',
-                'password' => 'sometimes|string',
-                'pincode' => 'sometimes|char|unique:users',
+                'name' => 'required|string',
+                'email' => 'required|email|unique:users',
+                'role_id' => 'required|exists:roles,id',
+                'password' => 'required|string',
+                'pincode' => 'required|string|size:4|unique:users',
             ],
-            'PUT', 'PATCH' => [
+            'PUT' => [
                 'name' => 'sometimes|string',
-                'email' => 'sometimes|email|unique:users',
+                'email'=>'sometimes|email|max:255|unique:users,email',
                 'role_id' => 'sometimes|exists:roles,id',
             ],
             'GET' => [
-                'name' => 'sometimes|string',
-                'email' => 'sometimes|email',
-                'role_id' => 'sometimes|exists:roles,id',
-                'sort_order' => 'sometimes|in:asc,desc',
+                'sort' => 'sometimes|string|in:name,role_id',
+                'search' => 'sometimes|string|in:name,email,role_id',
+                'sort_order' => 'sometimes|string|in:asc,desc',
+                'search_order' => 'sometimes|string',
             ]
         };
     }

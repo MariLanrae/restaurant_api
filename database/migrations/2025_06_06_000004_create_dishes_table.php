@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('dishes', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
-            $table->unsignedBigInteger('files_id');
-            $table->foreign('files_id')->references('id')->on('files');
+            $table->unsignedBigInteger('file_id');
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
             $table->text('compound')->index();
-            $table->integer('calories')->index();
+            $table->decimal('calories', 6, 2)->index();
             $table->decimal('price',10,2)->index();
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

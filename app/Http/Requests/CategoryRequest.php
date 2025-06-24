@@ -11,7 +11,7 @@ class CategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,18 +21,18 @@ class CategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        return match ($this->method()){
-            'POST' => [
+        return match ($this->route()->getActionMethod()) {
+            'store' => [
                 'title' => 'required|string|max:255|unique:categories',
-                'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ],
-            'PUT', 'PATCH' => [
-                'title' => 'sometimes|required|string|max:255|unique:categories',
-                'file' => 'sometimes|required|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                ],
-            'GET' => [
+            'update' => [
+                'title' => 'sometimes|string|max:255|unique:categories',
+                'file' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ],
+            'index' => [
                 'title' => 'sometimes|string|max:255',
-                'sort_search' => 'required|string|in:sort, search',
+                'sort_search' => 'sometimes|string|in:search',
                 'sort_order' => 'sometimes|in:asc,desc',
             ]
         };

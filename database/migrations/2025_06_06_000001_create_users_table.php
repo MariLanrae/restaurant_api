@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->char('pincode', 4)->unique();
-            $table->unsignedBigInteger('role_id')->index();
+            $table->string('pincode', 64)->unique();
+            $table->Integer('role_id')->index();
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->rememberToken();
             $table->timestamps();

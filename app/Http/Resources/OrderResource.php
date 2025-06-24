@@ -15,19 +15,24 @@ class OrderResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'dishes' => $this->dishes->map('roles', function ($dishes) {
-                return [
-                    'title' => $dishes->title,
-                    'quantity' => $dishes->pilot->quantity,
-                ];
-            }),
+            'id' => $this->id,
             'number' => $this->number,
             'closing_date' => $this->closing_date,
             'creation_date' => $this->creation_date,
             'status' => $this->status,
-            'user' => $this->whenLoaded('user'),
+            'user_id' => $this->user->id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
-        ];    }
+            'dishes' => $this->whenLoaded('dishes', $this->dishes->map(function ($dish){
+                return [
+                    'title' => $dish->title,
+                    'quantity' => $dish->pivot->quantity,
+                    'price' => $dish->price,
+                    'sum' => $dish->pivot->quantity * $dish->price,
+                    ];
+            })),
+        ];
+    }
+
 }

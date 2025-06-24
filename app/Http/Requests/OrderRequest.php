@@ -11,7 +11,7 @@ class OrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,25 +22,28 @@ class OrderRequest extends FormRequest
     public function rules(): array
     {
         return match ($this->method()){
-            'POST' => [
-                'number' => 'required|string',
-                'closing_date' => 'sometimes|date',
-                'user_id' => 'required|unsigned bigint|exists:users,id',
-                'status' => 'required|in:closed,open, canceled, paid',
-                'created_at' => 'required|date',
-            ],
-            'PUT', 'PATCH' => [
-                'creation_date' => 'sometimes|date',
-                'user_id' => 'sometimes|unsigned bigint|exists:users,id',
-                'closing_date' => 'sometimes|date',
-                'status' => 'sometimes|in:open,closed,canceled, paid',
-            ],
             'GET' => [
                 'number' => 'sometimes|string',
                 'closing_date' => 'sometimes|date',
-                'user_id' => 'sometimes|unsigned bigint|exists:users,id',
+                'user_id' => 'sometimes|int|exists:users,id',
                 'sort_order' => 'sometimes|in:asc,desc',
-            ]
+                'sort' => 'sometimes|in:number,closing_date,user_id',
+            ],
+            'POST' => [
+                'number' => 'required|string|min:3',
+                'user_id' => 'required|int|exists:users,id',
+                'status' => 'required|in:closed,open, canceled, paid',
+                'dishes' => 'required|array',
+                'dishes.*.title' => 'required|string|exists:dishes,title',
+                'dishes.*.quantity' => 'required|integer|min:1',
+            ],
+            'PUT' => [
+                'creation_date' => 'sometimes|date',
+                'user_id' => 'sometimes|int|exists:users,id',
+                'closing_date' => 'sometimes|date',
+                'status' => 'sometimes|in:open,closed,canceled, paid',
+            ],
+
         };
     }
 }

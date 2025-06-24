@@ -11,7 +11,7 @@ class DishRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,25 +21,26 @@ class DishRequest extends FormRequest
      */
     public function rules(): array
     {
-        return match ($this->method()){
-            'POST' => [
-                'title' => 'required|string|max:255|unique:dishes',
-                'price' => 'required|decimal',
-                'calories' => 'required|integer',
-                'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        return match ($this->route()->getActionMethod()){
+            'update' => [
+                'title' => 'sometimes|required|string|max:255|unique:dishes',
+                'price' => 'sometimes|required|decimal',
+                'calories' => 'sometimes|required|integer',
+                'file' => 'sometimes|required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'compound' => 'sometimes|string',
             ],
-            'PUT', 'PATCH' => [
+            'store' => [
                 'title' => 'required|string|max:255|unique:dishes',
-                'price' => 'required|decimal',
-                'calories' => 'required|integer',
-                'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                'compound' => 'sometimes|text',
+                'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'compound' => 'required|string',
+                'calories' => 'required|numeric',
+                'price' => 'required|numeric',
+                'category_id' => 'required|exists:categories,id'
             ],
-            'GET' => [
+            'index' => [
                 'title' => 'sometimes|string|max:255',
-                'compound' => 'sometimes|text',
-                'price' => 'sometimes|decimal',
-                'calories' => 'sometimes|integer',
+                'compound' => 'sometimes|string',
+                'sort' => 'sometimes|in:title,compound,price,calories',
                 'sort_order' => 'sometimes|in:asc,desc',
             ]
         };

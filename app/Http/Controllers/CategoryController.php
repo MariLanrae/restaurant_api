@@ -13,23 +13,31 @@ class CategoryController extends Controller
 
     public function index(CategoryRequest $request)
     {
-        $category = Category::all();
+        $validated = $request->validated();
 
-        if (isset ($request['sort'])) {
-            $category = $category->sortBy('title',  $request['sort_order']);
+        $category = Category::query();
+
+        if ($validated['sort_order']) {
+            $category->orderBy('title', $validated['sort_order']);
+        } elseif ($validated['search']) {
+            $category = $category->where('title', 'like', $validated['title']);
         }
-        elseif (isset($val['search'])) {
-            $category->where('title', 'like', $request['title']);
-        }
+        $category = $category->get();
 
         return CategoryResource::collection($category);
     }
 
     public function store(CategoryRequest $request): CategoryResource
     {
-        $path = $request->file('file')->store('uploads', 'public');
-        File::create(['path' => $path]);
-        $category = Category::create($request->all());
+        $validated = $request->validated();
+
+        $path =$validated->store('uploads', 'public');
+        $file = File::create(['path' => $path]);
+        $validated['file_id'] = $file->id;
+        $category = Category::create([
+            'title' => $validated['title'],
+            'file_id' => $validated['file_id'],
+        ]);
 
         return new CategoryResource($category);
     }
@@ -41,12 +49,21 @@ class CategoryController extends Controller
         return new CategoryResource($category);
     }
 
-    public function update(CategoryRequest $request, Category $category): CategoryResource
+    public function update(Category $category, CategoryRequest $request): CategoryResource
     {
-        $category->title = 'title';
-        Storage::disk('public')->delete($category->file->path);
-        $path = $request->file('file')->store('uploads', 'public');
-        $category->file->path = $path;
+        $validated = $request->validated();
+
+        if ($validated['title']) {
+            $category->title = $validated['title'];
+        }
+
+        if ($validated['file']) {
+            Storage::disk('public')->delete($category->file->path);
+            $path = $validated->store('uploads', 'public');
+            $category->file->path = $path;
+            $category->file->save();
+        }
+        $category->save();
 
         return new CategoryResource($category);
     }
@@ -58,6 +75,6 @@ class CategoryController extends Controller
         $file->delete();
         $category->delete();
 
-        return new CategoryResource($category['deleted_at']);
+        return new CategoryResource($category);
     }
 }

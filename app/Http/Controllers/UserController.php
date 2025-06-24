@@ -1,46 +1,45 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Role;
 use App\Models\User;
 use App\Http\Resources\UserResource;
 use  App\Http\Requests\UserRequest;
 
 class UserController extends Controller
 {
-    public function index_sort(UserRequest $request)
+
+    public function index(UserRequest $request)
     {
-        $users = User::all();
+        $validated = $request->validated();
 
-        if (isset ($request['name'])){
-            $users = $users->sortBy('name', $request['sort_order']);
-        }
-        elseif (isset ($request['role_id'])){
-            $users = $users->sortBy('role_id',  $request['sort_order']);
-        }
+        $user = User::query();
 
-        return UserResource::collection($users);
-    }
-
-    public function index_search(UserRequest $request)
-    {
-        $user = User::all();
-
-        if (isset ($request['name'])) {
-            $user->where('name', 'like', $request['name']);
+        if (isset($validated['search'])) {
+            if ($validated['search'] == 'name') {
+                $user = $user->where('name', 'like', '%' . $validated['search_order'] . '%');
+            }
+            elseif ($validated['search'] == 'role_id') {
+                $user = $user->where('role_id', 'like', '%' . $validated['search_order'] . '%');
+            }
+            elseif ($validated['search'] == 'email') {
+                $user = $user->where('email', 'like', '%' . $validated['search_order'] . '%');
         }
-        elseif (isset ($request['email'])) {
-            $user->where('email', 'like', $request['email']);
         }
-        elseif (isset ($request['role_id'])) {
-            $user->where('role_id', 'like', $request['role_id']);
+        if (isset($validated['sort'])) {
+             $user = $user->orderBy($validated['sort'], ($validated['sort_order'] ?? 'asc'));
         }
-
-        return UserResource::collection($user);
+        $val = $user->get();
+        return UserResource::collection($val);
     }
 
     public function store(UserRequest $request): UserResource
     {
-        $user = User::create($request->all());
+        $validated = $request->validated();
+
+        $role = Role::where('id', $validated['role_id'])->firstOrFail();
+        $validated['role_id'] = $role->id;
+        $user = User::create($validated->all());
 
         return new UserResource($user);
     }
@@ -50,9 +49,20 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    public function update(UserRequest $request, User $user): UserResource
+    public function update(User $user, UserRequest $request): UserResource
     {
-        $user->update($request->all());
+        $validated = $request->validated();
+
+        if ($validated['name']) {
+            $user->name = $validated['name'];
+        }
+        if ($validated['email']) {
+            $user->email = $validated['email'];
+        }
+        if ($validated['role_id']) {
+            $user->role_id = $validated['role_id'];
+        }
+        $user->save();
 
         return new UserResource($user);
     }
@@ -61,6 +71,6 @@ class UserController extends Controller
     {
         $user->delete();
 
-        return new UserResource($user['deleted_at']);
+        return new UserResource($user);
     }
 }

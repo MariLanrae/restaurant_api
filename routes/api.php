@@ -12,22 +12,32 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::apiResource('categories', CategoryController::class)->except('index');
-Route::get('/categories/parameter/{parameter}', [CategoryController::class, 'index'])->name('categories.index');
+Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
+Route::post('roles', [RoleController::class, 'store']);
+Route::get('roles/{role}', [RoleController::class, 'show'])->name('roles.show');
+Route::put('roles/{role}', [RoleController::class, 'update']);
+Route::delete('roles/{role}', [RoleController::class, 'destroy']);
 
-Route::apiResource('users', UserController::class)->except('index');
-Route::get('/users/search/{search}', [UserController::class, 'index_search'])->name('users.search');
-Route::get('/users/sort/{sort}', [UserController::class, 'index_sort'])->name('users.sort');
+Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
+Route::post('users', [UserController::class, 'store'])->name('users.store');
+Route::delete('users/{user}', [UserController::class, 'destroy']);
+Route::put('users/{user}', [UserController::class, 'update']);
+Route::get('users', [UserController::class, 'index'])->name('users.index');
 
-Route::apiResource('roles', RoleController::class);
+Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
+Route::post('categories/{category}', [CategoryController::class, 'update']);
+Route::post('categories', [CategoryController::class, 'store']);
+Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+Route::get('categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
 
-Route::apiResource('orders', OrderController::class)->except('index');
-Route::get('/orders/search/{search}', [OrderController::class, 'index_search'])->name('orders.search');
-Route::get('/orders/sort/{sort}', [OrderController::class, 'index_sort'])->name('orders.sort');
+Route::post('dishes/{dish}', [DishController::class, 'update']);
+Route::delete('dishes/{dish}', [DishController::class, 'destroy']);
+Route::post('dishes', [DishController::class, 'store']);
+Route::get('dishes/{dishes}', [DishController::class, 'show'])->name('dishes.show');
+Route::get('dishes', [DishController::class, 'index'])->name('dishes.index');
 
-Route::apiResource('dishes', DishController::class)->except('index');
-Route::get('/dishes/search/{search}', [DishController::class, 'index_search'])->name('dishes.search');
-Route::get('/dishes/sort/{sort}', [DishController::class, 'index_sort'])->name('dishes.sort');
-
-
-
+Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+Route::put('orders/{order}', [OrderController::class, 'update']);
+Route::delete('orders/{order}', [OrderController::class, 'destroy']);
+Route::post('orders', [OrderController::class, 'store']);
