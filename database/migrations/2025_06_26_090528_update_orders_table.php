@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
+        Schema::table('orders', function (Blueprint $table) {
+            $table->timestamp('closing_date')->nullable()->change();
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::table('orders', function (Blueprint $table) {
+            $table->timestamp('closing_date')->nullable(false)->change();
+        });
     }
 };

@@ -21,20 +21,24 @@ class CategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        return match ($this->route()->getActionMethod()) {
-            'store' => [
+        return match ($this->method()) {
+            'POST' => [
                 'title' => 'required|string|max:255|unique:categories',
                 'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ],
-            'update' => [
-                'title' => 'sometimes|string|max:255|unique:categories',
-                'file' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            ],
-            'index' => [
+
+            'GET' => [
                 'title' => 'sometimes|string|max:255',
-                'sort_search' => 'sometimes|string|in:search',
+                'search' => 'sometimes|string|in:search',
                 'sort_order' => 'sometimes|in:asc,desc',
-            ]
+            ],
+            default => [
+                response()->json(['message' => 'Invalid method.'], 405),
+            ],
         };
     }
+   /* public function messages(): array
+    {
+        return [response()->json(['message' => 'Invalid method.'], 405)];
+    }*/
 }

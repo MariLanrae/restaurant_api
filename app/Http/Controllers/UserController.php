@@ -17,20 +17,21 @@ class UserController extends Controller
 
         if (isset($validated['search'])) {
             if ($validated['search'] == 'name') {
-                $user = $user->where('name', 'like', '%' . $validated['search_order'] . '%');
+                $user = $user->where('name', 'iLike', '%' . $validated['search_order'] . '%');
             }
             elseif ($validated['search'] == 'role_id') {
-                $user = $user->where('role_id', 'like', '%' . $validated['search_order'] . '%');
+                $user = $user->where('role_id', 'iLike', '%' . $validated['search_order'] . '%');
             }
             elseif ($validated['search'] == 'email') {
-                $user = $user->where('email', 'like', '%' . $validated['search_order'] . '%');
+                $user = $user->where('email', 'iLike', '%' . $validated['search_order'] . '%');
         }
         }
         if (isset($validated['sort'])) {
              $user = $user->orderBy($validated['sort'], ($validated['sort_order'] ?? 'asc'));
         }
-        $val = $user->get();
-        return UserResource::collection($val);
+        $user = $user->paginate(5);
+
+        return UserResource::collection($user);
     }
 
     public function store(UserRequest $request): UserResource
@@ -39,7 +40,7 @@ class UserController extends Controller
 
         $role = Role::where('id', $validated['role_id'])->firstOrFail();
         $validated['role_id'] = $role->id;
-        $user = User::create($validated->all());
+        $user = User::create($validated);
 
         return new UserResource($user);
     }
@@ -53,13 +54,13 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        if ($validated['name']) {
+        if (isset($validated['name'])) {
             $user->name = $validated['name'];
         }
-        if ($validated['email']) {
+        if (isset($validated['email'])) {
             $user->email = $validated['email'];
         }
-        if ($validated['role_id']) {
+        if (isset($validated['role_id'])) {
             $user->role_id = $validated['role_id'];
         }
         $user->save();

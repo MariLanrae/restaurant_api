@@ -21,15 +21,8 @@ class DishRequest extends FormRequest
      */
     public function rules(): array
     {
-        return match ($this->route()->getActionMethod()){
-            'update' => [
-                'title' => 'sometimes|required|string|max:255|unique:dishes',
-                'price' => 'sometimes|required|decimal',
-                'calories' => 'sometimes|required|integer',
-                'file' => 'sometimes|required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                'compound' => 'sometimes|string',
-            ],
-            'store' => [
+        return match ($this->method()) {
+            'POST' => [
                 'title' => 'required|string|max:255|unique:dishes',
                 'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'compound' => 'required|string',
@@ -37,12 +30,15 @@ class DishRequest extends FormRequest
                 'price' => 'required|numeric',
                 'category_id' => 'required|exists:categories,id'
             ],
-            'index' => [
+            'GET' => [
                 'title' => 'sometimes|string|max:255',
                 'compound' => 'sometimes|string',
                 'sort' => 'sometimes|in:title,compound,price,calories',
                 'sort_order' => 'sometimes|in:asc,desc',
-            ]
+            ],
+            default => [
+                response()->json(['message' => 'Invalid method.'], 405),
+            ],
         };
     }
 }

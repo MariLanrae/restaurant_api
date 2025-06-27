@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class RoleRequest extends FormRequest
+class UpdateDishRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,16 +22,12 @@ class RoleRequest extends FormRequest
      */
     public function rules(): array
     {
-        return match ($this->method()){
-            'POST', => [
-                'name' => 'required|string|max:255|unique:roles',
-            ],
-            'PUT' => [
-                'name' => ['sometimes','string','max:255', Rule::unique('roles')->ignore($this->role->id)],
-            ],
-            default => [
-                response()->json(['message' => 'Invalid method.'], 405),
-            ],
-        };
+        return [
+            'title' => ['sometimes','required','string','max:255', Rule::unique('dishes')->ignore($this->dish->id)],
+            'price' => 'sometimes|required|decimal',
+            'calories' => 'sometimes|required|integer',
+            'file' => 'sometimes|required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'compound' => 'sometimes|string',
+        ];
     }
 }

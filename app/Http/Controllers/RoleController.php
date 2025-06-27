@@ -11,7 +11,8 @@ class RoleController extends Controller
 
     public function index()
     {
-        $role = Role::all();
+        $role = Role::query();
+        $role = $role->paginate(3);
 
         return RoleResource::collection($role);
     }
@@ -19,7 +20,7 @@ class RoleController extends Controller
     public function store(RoleRequest $request): RoleResource
     {
         $validated = $request->validated();
-        $role = Role::create($validated->all());
+        $role = Role::create($validated);
 
         return new RoleResource($role);
     }
@@ -35,7 +36,7 @@ class RoleController extends Controller
     {
         $validated = $request->validated();
 
-        $role->update($validated->all());
+        $role->update($validated);
 
         return new RoleResource($role);
     }

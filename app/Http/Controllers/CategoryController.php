@@ -7,6 +7,7 @@ use App\Models\File;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\CategoryResource;
 use  App\Http\Requests\CategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -17,12 +18,16 @@ class CategoryController extends Controller
 
         $category = Category::query();
 
-        if ($validated['sort_order']) {
+
+        if (isset($validated['sort_order'])) {
             $category->orderBy('title', $validated['sort_order']);
-        } elseif ($validated['search']) {
-            $category = $category->where('title', 'like', $validated['title']);
         }
-        $category = $category->get();
+        if (isset($validated['search'])) {
+
+            $category = $category->where('title', 'iLike', $validated['title']);
+        }
+        $category = $category->paginate(1);
+
 
         return CategoryResource::collection($category);
     }
@@ -31,7 +36,7 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
 
-        $path =$validated->store('uploads', 'public');
+        $path =$validated['file']->store('uploads', 'public');
         $file = File::create(['path' => $path]);
         $validated['file_id'] = $file->id;
         $category = Category::create([
@@ -49,21 +54,18 @@ class CategoryController extends Controller
         return new CategoryResource($category);
     }
 
-    public function update(Category $category, CategoryRequest $request): CategoryResource
+    public function update(UpdateCategoryRequest $category, CategoryRequest $request): CategoryResource
     {
         $validated = $request->validated();
+        $category->update($validated);
+        $category->save();
 
-        if ($validated['title']) {
-            $category->title = $validated['title'];
-        }
-
-        if ($validated['file']) {
+        if (array_key_exists('file', $validated)) {
             Storage::disk('public')->delete($category->file->path);
-            $path = $validated->store('uploads', 'public');
+            $path = $validated['file']->store('uploads', 'public');
             $category->file->path = $path;
             $category->file->save();
         }
-        $category->save();
 
         return new CategoryResource($category);
     }

@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use App\Rules\GetRule;
 
 class UserRequest extends FormRequest
 {
@@ -21,6 +23,9 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
+        $search =  $this->input('search');
+        $search_order =  $this->input('search_order');
+
         return match ($this->method()){
             'POST' => [
                 'name' => 'required|string',
@@ -31,14 +36,18 @@ class UserRequest extends FormRequest
             ],
             'PUT' => [
                 'name' => 'sometimes|string',
-                'email'=>'sometimes|email|max:255|unique:users,email',
+                'email'=> ['sometimes','email','max:25', Rule::unique('users')->ignore($this->user->id)],
                 'role_id' => 'sometimes|exists:roles,id',
             ],
             'GET' => [
                 'sort' => 'sometimes|string|in:name,role_id',
                 'search' => 'sometimes|string|in:name,email,role_id',
                 'sort_order' => 'sometimes|string|in:asc,desc',
-                'search_order' => 'sometimes|string',
+                'search_order' => ['bail','sometimes','string', new GetRule($search, $search_order)
+                ],
+            ],
+            default => [
+                response()->json(['message' => 'Invalid method.'], 405),
             ]
         };
     }

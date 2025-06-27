@@ -41,9 +41,11 @@ class OrderRequest extends FormRequest
                 'creation_date' => 'sometimes|date',
                 'user_id' => 'sometimes|int|exists:users,id',
                 'closing_date' => 'sometimes|date',
-                'status' => 'sometimes|in:open,closed,canceled, paid',
+                'status' => 'sometimes|string|in:open,closed,canceled, paid',
             ],
-
+            default => [
+                response()->json(['message' => 'Invalid method.'], 405),
+            ],
         };
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('number')->unique();
             $table->timestamp('creation_date');
-            $table->timestamp('closing_date')->nullable()->index();
+            $table->timestamp('closing_date')->index();
             $table->enum('status', ['open','closed','canceled','paid']);
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -17,22 +17,22 @@ class OrderController extends Controller
 
         $order = Order::query();
 
-        if ($validated['number']) {
-            $order->where('number', 'like', '%' . $validated['number'] . '%');
+        if (array_key_exists('number', $validated)) {
+            $order->where('number', 'iLike', '%' . $validated['number'] . '%');
         }
-        elseif ($validated['closing_date']) {
-            $order->where('closing_date', 'like','%' . $validated['closing_date'] . '%');
+        elseif (array_key_exists('closing_date', $validated)) {
+            $order->where('closing_date', 'iLike','%' . $validated['closing_date'] . '%');
         }
-        elseif ($validated['user_id']) {
-            $order->where('user_id', 'like', '%' . $validated['user_id'] . '%');
+        elseif (array_key_exists('user_id', $validated)) {
+            $order->where('user_id', 'iLike', '%' . $validated['user_id'] . '%');
         }
-        if ($validated['sort']) {
+        if (array_key_exists('sort',  $validated)) {
             $order->orderBy($validated['sort'], $validated['sort_order' ?? 'asc']);
         }
-        $val = $order->get();
+        $order = $order->paginate(5);
 
 
-        return OrderResource::collection($val);
+        return OrderResource::collection($order);
     }
 
     public function store(OrderRequest $request): OrderResource
