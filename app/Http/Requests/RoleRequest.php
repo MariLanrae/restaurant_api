@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use InvalidArgumentException;
 
 class RoleRequest extends FormRequest
 {
@@ -23,15 +24,17 @@ class RoleRequest extends FormRequest
     public function rules(): array
     {
         return match ($this->method()){
+            'GET' => [
+                'page' => 'sometimes|integer',
+                'perPage' => 'sometimes|integer',
+            ],
             'POST', => [
                 'name' => 'required|string|max:255|unique:roles',
             ],
             'PUT' => [
                 'name' => ['sometimes','string','max:255', Rule::unique('roles')->ignore($this->role->id)],
             ],
-            default => [
-                response()->json(['message' => 'Invalid method.'], 405),
-            ],
+            default => throw new InvalidArgumentException("Invalid request method [{$this->method()}]")
         };
     }
 }

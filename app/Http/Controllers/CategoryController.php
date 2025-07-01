@@ -26,7 +26,7 @@ class CategoryController extends Controller
 
             $category = $category->where('title', 'iLike', $validated['title']);
         }
-        $category = $category->paginate(1);
+        $category = $category->paginate($validated['perPage'], ['*'], 'page', $validated['page']);
 
 
         return CategoryResource::collection($category);
@@ -35,8 +35,7 @@ class CategoryController extends Controller
     public function store(CategoryRequest $request): CategoryResource
     {
         $validated = $request->validated();
-
-        $path =$validated['file']->store('uploads', 'public');
+        $path = Storage::disk('public')->putFile('uploads', $validated['file']);
         $file = File::create(['path' => $path]);
         $validated['file_id'] = $file->id;
         $category = Category::create([
@@ -49,7 +48,7 @@ class CategoryController extends Controller
 
     public function show($id): CategoryResource
     {
-        $category = Category::find($id);
+        $category = Category::findOrFail($id);
 
         return new CategoryResource($category);
     }
@@ -60,9 +59,9 @@ class CategoryController extends Controller
         $category->update($validated);
         $category->save();
 
-        if (array_key_exists('file', $validated)) {
+        if (isset($validated['file'])) {
+            $path = Storage::disk('public')->putFile('uploads', $validated['file']);
             Storage::disk('public')->delete($category->file->path);
-            $path = $validated['file']->store('uploads', 'public');
             $category->file->path = $path;
             $category->file->save();
         }

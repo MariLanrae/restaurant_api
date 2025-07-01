@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use InvalidArgumentException;
 
 class OrderRequest extends FormRequest
 {
@@ -28,6 +29,8 @@ class OrderRequest extends FormRequest
                 'user_id' => 'sometimes|int|exists:users,id',
                 'sort_order' => 'sometimes|in:asc,desc',
                 'sort' => 'sometimes|in:number,closing_date,user_id',
+                'page' => 'sometimes|integer',
+                'perPage' => 'sometimes|integer',
             ],
             'POST' => [
                 'number' => 'required|string|min:3',
@@ -43,9 +46,7 @@ class OrderRequest extends FormRequest
                 'closing_date' => 'sometimes|date',
                 'status' => 'sometimes|string|in:open,closed,canceled, paid',
             ],
-            default => [
-                response()->json(['message' => 'Invalid method.'], 405),
-            ],
+            default => throw new InvalidArgumentException("Invalid request method [{$this->method()}]")
         };
     }
 }

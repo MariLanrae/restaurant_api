@@ -15,6 +15,7 @@ return new class extends Migration
             $table->renameColumn('files_id', 'file_id');
             $table->dropForeign(['files_id']);
             $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
+            $table->decimal('calories', 6, 2)->change();
         });
     }
     /**
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->renameColumn('file_id', 'files_id');
             $table->dropForeign(['file_id']);
             $table->foreign('files_id')->references('id')->on('files');
+            $table->integer('calories')->change();
         });
     }
 };

@@ -5,10 +5,6 @@ namespace App\Rules;
 use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
-use function Laravel\Prompts\error;
-
 /**
  * @method input(string $string)
  */
@@ -29,9 +25,10 @@ class GetRule implements ValidationRule
     }
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $val = DB::table('users')->where($this->search, $this->search_order)->exists();
-        if (!$val){
-            abort(404, "Запись не найдена");
+        $exists = User::where($this->search, $this->search_order)->exists();
+        if (!$exists) {
+            $fail($attribute.'Запись с указанными параметрами не найдена.');
+
         }
     }
 }

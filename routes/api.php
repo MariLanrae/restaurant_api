@@ -29,7 +29,7 @@ Route::group(['prefix' => 'users', 'middleware' => [],], function () {
 });
 
 Route::group(['prefix' => 'categories', 'middleware' => [],], function () {
-    Route::get('/{id}', [CategoryController::class, 'show']);
+    Route::get('/{category}', [CategoryController::class, 'show']);
     Route::get('/', [CategoryController::class, 'index']);
     Route::post('/', [CategoryController::class, 'store']);
     Route::post('/{category}', [CategoryController::class, 'update']);

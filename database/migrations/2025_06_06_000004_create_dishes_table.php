@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('files_id');
             $table->foreign('files_id')->references('id')->on('files');
             $table->text('compound')->index();
-            $table->decimal('calories', 6, 2)->index();
+            $table->integer('calories')->index();
             $table->decimal('price',10,2)->index();
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');

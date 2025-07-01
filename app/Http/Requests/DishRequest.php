@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use InvalidArgumentException;
 
 class DishRequest extends FormRequest
 {
@@ -35,10 +36,10 @@ class DishRequest extends FormRequest
                 'compound' => 'sometimes|string',
                 'sort' => 'sometimes|in:title,compound,price,calories',
                 'sort_order' => 'sometimes|in:asc,desc',
+                'page' => 'sometimes|integer',
+                'perPage' => 'sometimes|integer',
             ],
-            default => [
-                response()->json(['message' => 'Invalid method.'], 405),
-            ],
+            default => throw new InvalidArgumentException("Invalid request method [{$this->method()}]")
         };
     }
 }

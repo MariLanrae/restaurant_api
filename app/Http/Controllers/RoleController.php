@@ -9,10 +9,11 @@ use  App\Http\Requests\RoleRequest;
 class RoleController extends Controller
 {
 
-    public function index()
+    public function index(RoleRequest $request)
     {
+        $validated = $request->validated();
         $role = Role::query();
-        $role = $role->paginate(3);
+        $role = $role->paginate($validated['perPage'], ['*'], 'page', $validated['page']);
 
         return RoleResource::collection($role);
     }
@@ -25,7 +26,7 @@ class RoleController extends Controller
         return new RoleResource($role);
     }
 
-    public function show($id) //RoleResource
+    public function show($id)
     {
         $role = Role::findOrFail($id);
 

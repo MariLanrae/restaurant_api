@@ -29,7 +29,7 @@ class UserController extends Controller
         if (isset($validated['sort'])) {
              $user = $user->orderBy($validated['sort'], ($validated['sort_order'] ?? 'asc'));
         }
-        $user = $user->paginate(5);
+        $user = $user->paginate($validated['perPage'], ['*'], 'page', $validated['page']);
 
         return UserResource::collection($user);
     }
@@ -45,8 +45,10 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    public function show(User $user): UserResource
+    public function show($id): UserResource
     {
+        $user = User::findOrFail($id);
+
         return new UserResource($user);
     }
 
@@ -54,16 +56,7 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        if (isset($validated['name'])) {
-            $user->name = $validated['name'];
-        }
-        if (isset($validated['email'])) {
-            $user->email = $validated['email'];
-        }
-        if (isset($validated['role_id'])) {
-            $user->role_id = $validated['role_id'];
-        }
-        $user->save();
+        $user->update($validated);
 
         return new UserResource($user);
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use InvalidArgumentException;
 
 class CategoryRequest extends FormRequest
 {
@@ -31,14 +32,10 @@ class CategoryRequest extends FormRequest
                 'title' => 'sometimes|string|max:255',
                 'search' => 'sometimes|string|in:search',
                 'sort_order' => 'sometimes|in:asc,desc',
+                'page' => 'sometimes|integer',
+                'perPage' => 'sometimes|integer',
             ],
-            default => [
-                response()->json(['message' => 'Invalid method.'], 405),
-            ],
+            default => throw new InvalidArgumentException("Invalid request method [{$this->method()}]")
         };
     }
-   /* public function messages(): array
-    {
-        return [response()->json(['message' => 'Invalid method.'], 405)];
-    }*/
 }

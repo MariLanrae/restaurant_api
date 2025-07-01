@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Rules\GetRule;
+use InvalidArgumentException;
 
 class UserRequest extends FormRequest
 {
@@ -45,10 +46,10 @@ class UserRequest extends FormRequest
                 'sort_order' => 'sometimes|string|in:asc,desc',
                 'search_order' => ['bail','sometimes','string', new GetRule($search, $search_order)
                 ],
+                'page' => 'sometimes|integer',
+                'perPage' => 'sometimes|integer',
             ],
-            default => [
-                response()->json(['message' => 'Invalid method.'], 405),
-            ]
+            default => throw new InvalidArgumentException("Invalid request method [{$this->method()}]")
         };
     }
 }

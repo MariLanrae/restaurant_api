@@ -17,19 +17,19 @@ class OrderController extends Controller
 
         $order = Order::query();
 
-        if (array_key_exists('number', $validated)) {
+        if (isset($validated['number'])) {
             $order->where('number', 'iLike', '%' . $validated['number'] . '%');
         }
-        elseif (array_key_exists('closing_date', $validated)) {
+        if (isset($validated['closing_date'])) {
             $order->where('closing_date', 'iLike','%' . $validated['closing_date'] . '%');
         }
-        elseif (array_key_exists('user_id', $validated)) {
+        if (isset($validated['user_id'])) {
             $order->where('user_id', 'iLike', '%' . $validated['user_id'] . '%');
         }
-        if (array_key_exists('sort',  $validated)) {
+        if (isset($validated['sort'])) {
             $order->orderBy($validated['sort'], $validated['sort_order' ?? 'asc']);
         }
-        $order = $order->paginate(5);
+        $order = $order->paginate($validated['perPage'], ['*'], 'page', $validated['page']);
 
 
         return OrderResource::collection($order);
@@ -55,16 +55,22 @@ class OrderController extends Controller
             'creation_date' => Carbon::now()->format('Y-m-d H:i:s'),
         ]);
 
-        foreach ($validated['dishes'] as $dishes) {
-            $dish = Dish::where('title', $dishes['title'])->first();
-            $order->dishes()->attach($dish->id, ['quantity' => $dishes['quantity']]);
+        $titles = array_column($validated['dishes'], 'title');
+        $dishes = Dish::whereIn('title', $titles)->get()->keyBy('title');
+        foreach ($validated['dishes'] as $dishesData) {
+            $dish = $dishes->get($dishesData['title']);
+            if ($dish) {
+                $order->dishes()->attach($dish->id, ['quantity' => $dishesData['quantity']]);
+            }
         }
 
         return new OrderResource($order);
     }
 
-    public function show(Order $order): OrderResource
+    public function show($id): OrderResource
     {
+        $order = Order::findOrFail($id);
+
         return new OrderResource($order);
     }
 
@@ -72,19 +78,7 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
 
-        if ($validated['creation_date']) {
-            $order->creation_date = $validated['creation_date'];
-        }
-        if ($validated['closing_date']) {
-            $order->closing_date = $validated['closing_date'];
-        }
-        if ($validated['user_id']) {
-            $order->user_id = $validated['user_id'];
-        }
-        if ($validated['status']) {
-            $order->status = $validated['status'];
-        }
-        $order->save();
+        $order->update($validated);
 
         return new OrderResource($order);
     }
