@@ -5,30 +5,31 @@ namespace App\Rules;
 use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-/**
- * @method input(string $string)
- */
-class GetRule implements ValidationRule
+use Illuminate\Contracts\Validation\DataAwareRule;
+
+class GetRule implements ValidationRule, DataAwareRule
 {
-    /**
-     * Run the validation rule.
-     *
-     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
-     */
-    protected $search, $search_order;
+    protected $data = [];
 
-
-    public function __construct($search, $search_order)
+    public function setData(array $data): static
     {
-        $this->search = $search;
-        $this->search_order = $search_order;
+        $this->data = $data;
+
+        return $this;
     }
+
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $exists = User::where($this->search, $this->search_order)->exists();
-        if (!$exists) {
-            $fail($attribute.'Запись с указанными параметрами не найдена.');
+        $searchField = $this->data['search'] ?? null;
 
+        if (!$searchField) {
+            return;
+        }
+
+        $exists = User::where($searchField, $value)->exists();
+
+        if (!$exists) {
+            $fail('Запись с указанными параметрами не найдена.');
         }
     }
 }
