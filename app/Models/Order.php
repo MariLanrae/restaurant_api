@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @method static create(array $all)
+ */
 class Order extends Model
 {
     use SoftDeletes;
@@ -16,6 +19,11 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'status',
+        'number',
+        'creation_date',
+        'closing_date',
+        'total_price',
+        'dishes',
     ];
 
     public function user(): BelongsTo
@@ -25,6 +33,6 @@ class Order extends Model
 
     public function dishes(): BelongsToMany
     {
-        return $this->belongsToMany(Dish::class);
+        return $this->belongsToMany(Dish::class)->withPivot('quantity');
     }
 }

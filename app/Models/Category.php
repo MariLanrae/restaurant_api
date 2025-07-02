@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @method static create(array $all)
+ * @method static where(string $string, mixed $category_id)
+ */
 class Category extends Model
 {
     use SoftDeletes;

@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
+/**
+ * @method static findOrFail($id)
+ * @method static where(string $string, mixed $role_id)
+ * @method static create(array $all)
+ */
 class Role extends Model
 {
     public $table = 'roles';
