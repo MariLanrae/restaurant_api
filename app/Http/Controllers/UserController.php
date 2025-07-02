@@ -29,7 +29,7 @@ class UserController extends Controller
         if (isset($validated['sort'])) {
              $user = $user->orderBy($validated['sort'], ($validated['sort_order'] ?? 'asc'));
         }
-        $user = $user->paginate($validated['perPage'], ['*'], 'page', $validated['page']);
+        $user = $user->paginate(perPage: $validated['perPage'], page:  $validated['page'])->withQueryString();
 
         return UserResource::collection($user);
     }

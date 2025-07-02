@@ -29,7 +29,7 @@ class OrderController extends Controller
         if (isset($validated['sort'])) {
             $order->orderBy($validated['sort'], $validated['sort_order' ?? 'asc']);
         }
-        $order = $order->paginate($validated['perPage'], ['*'], 'page', $validated['page']);
+        $order = $order->paginate(perPage: $validated['perPage'], page:  $validated['page'])->withQueryString();
 
 
         return OrderResource::collection($order);

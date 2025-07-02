@@ -26,7 +26,7 @@ class CategoryController extends Controller
 
             $category = $category->where('title', 'iLike', $validated['title']);
         }
-        $category = $category->paginate($validated['perPage'], ['*'], 'page', $validated['page']);
+        $category = $category->paginate(perPage: $validated['perPage'], page:  $validated['page'])->withQueryString();
 
 
         return CategoryResource::collection($category);

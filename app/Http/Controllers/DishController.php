@@ -30,7 +30,7 @@ class DishController extends Controller
             $dish->where('compound', 'iLike', '%' . $validated['compound'] . '%');
         }
 
-        $dishes= $dish->paginate($validated['perPage'], ['*'], 'page', $validated['page']);
+        $dishes= $dish->paginate(perPage: $validated['perPage'], page:  $validated['page'])->withQueryString();
 
         return DishResource::collection($dishes);
     }

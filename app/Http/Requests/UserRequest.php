@@ -44,7 +44,7 @@ class UserRequest extends FormRequest
                 'sort' => 'sometimes|string|in:name,role_id',
                 'search' => 'sometimes|string|in:name,email,role_id',
                 'sort_order' => 'sometimes|string|in:asc,desc',
-                'search_order' => ['bail','sometimes','string', new GetRule($search, $search_order)
+                'search_order' => ['bail','sometimes','string', new GetRule()
                 ],
                 'page' => 'sometimes|integer',
                 'perPage' => 'sometimes|integer',

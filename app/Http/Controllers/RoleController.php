@@ -13,7 +13,7 @@ class RoleController extends Controller
     {
         $validated = $request->validated();
         $role = Role::query();
-        $role = $role->paginate($validated['perPage'], ['*'], 'page', $validated['page']);
+        $role = $role->paginate(perPage: $validated['perPage'], page:  $validated['page'])->withQueryString();
 
         return RoleResource::collection($role);
     }
