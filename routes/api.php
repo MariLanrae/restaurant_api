@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
@@ -7,10 +8,14 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\DishController;
+use App\Http\Middleware\AuthMiddleware;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/logout',[AuthController::class, 'logout'])->middleware(AuthMiddleware::class);
 
 Route::group(['prefix' => 'roles', 'middleware' => [],], function () {
     Route::get('/{id}', [RoleController::class, 'show']);
