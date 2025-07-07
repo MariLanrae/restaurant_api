@@ -23,7 +23,7 @@ class UpdateCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes','string','max:255', Rule::unique('category')->ignore($this->category->id)],
+            'title' => ['sometimes','string','max:255', Rule::unique('categories')->ignore($this->category->id)],
             'file' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
