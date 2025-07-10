@@ -45,7 +45,7 @@ class LoginAction
         return $token;
     }
 
-    public function authLogin($validated)
+    public function login($validated)
     {
         $token = null;
 

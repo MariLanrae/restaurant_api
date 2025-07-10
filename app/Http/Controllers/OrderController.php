@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\OrderAction;
 use App\Models\Order;
 use App\Http\Resources\OrderResource;
 use App\Http\Requests\OrderRequest;
-use App\Actions\OrderAction;
 
 class OrderController extends Controller
 {
@@ -14,7 +14,8 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
 
-        $order = $action->orderIndex($validated);
+        $order = $action->index($validated);
+
 
         return OrderResource::collection($order);
     }
@@ -23,14 +24,14 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
 
-        $order = $action->orderStore($validated);
+        $order = $action->store($validated);
 
         return new OrderResource($order);
     }
 
     public function show($id, OrderAction $action): OrderResource
     {
-        $order = $action->orderShow($id);
+        $order = $action->show($id);
 
         return new OrderResource($order);
     }
@@ -39,14 +40,14 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
 
-        $order = $action->orderUpdate($validated, $order);
+        $order = $action->update($validated, $order);
 
         return new OrderResource($order);
     }
 
     public function destroy(Order $order, OrderAction $action): OrderResource
     {
-        $order = $action->orderDelete($order);
+        $order = $action->destroy($order);
 
         return new OrderResource($order);
     }

@@ -12,7 +12,7 @@ class AuthController extends Controller
         {
             $validated = $req->validated();
 
-            $token = $action->authLogin($validated);
+            $token = $action->login($validated);
 
             if (!isset($token)) {
                 throw new AuthenticationException();

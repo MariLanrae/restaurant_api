@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\UserAction;
 use App\Models\User;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\UserRequest;
-use App\Actions\UserAction;
 
 class UserController extends Controller
 {
-
     public function index(UserRequest $request, UserAction $action)
     {
         $validated = $request->validated();
+        $user = $action->index($validated);
 
-        $user = $action->userIndex($validated);
 
         return UserResource::collection($user);
     }
@@ -23,14 +22,14 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        $user = $action->userStore($validated);
+        $user = $action->store($validated);
 
         return new UserResource($user);
     }
 
     public function show($id, UserAction $action): UserResource
     {
-        $user = $action->userShow($id);
+        $user = $action->show($id);
 
         return new UserResource($user);
     }
@@ -39,14 +38,14 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        $user = $action->userUpdate($user, $validated);
+        $user = $action->update($user, $validated);
 
         return new UserResource($user);
     }
 
     public function destroy(User $user, UserAction $action): UserResource
     {
-        $user = $action->userDelete($user);
+        $user = $action->destroy($user);
 
         return new UserResource($user);
     }
