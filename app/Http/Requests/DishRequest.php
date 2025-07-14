@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\GetRule;
 use Illuminate\Foundation\Http\FormRequest;
 use InvalidArgumentException;
 
@@ -33,11 +32,10 @@ class DishRequest extends FormRequest
                 'category_id' => 'required|exists:categories,id'
             ],
             'GET' => [
-                'sort' => 'sometimes|string|in:title,compound,price,calories',
-                'sort_order' => 'sometimes|string|in:asc,desc',
-                'search' => 'sometimes|string|in:compound,title',
-                'search_order' => ['bail','sometimes','string', new GetRule('App\Models\Dish')
-                    ],
+                'title' => 'sometimes|string|max:255',
+                'compound' => 'sometimes|string',
+                'sort' => 'sometimes|in:title,compound,price,calories',
+                'sort_order' => 'sometimes|in:asc,desc',
                 'page' => 'sometimes|integer',
                 'perPage' => 'sometimes|integer',
             ],

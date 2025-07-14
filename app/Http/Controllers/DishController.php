@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\DishAction;
+use App\Models\Category;
 use App\Models\Dish;
+use App\Models\File;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\DishResource;
 use App\Http\Requests\DishRequest;
 use App\Http\Requests\UpdateDishRequest;
@@ -12,41 +14,75 @@ use App\Http\Requests\UpdateDishRequest;
 class DishController extends Controller
 {
 
-    public function index(DishRequest $request, DishAction $action)
+    public function index(DishRequest $request)
     {
         $validated = $request->validated();
-        $dish = $action->index($validated, Dish::class);
 
-        return DishResource::collection($dish);
+        $dish = Dish::query();
+
+        if (isset($validated['sort'])) {
+            $dish->orderBy($validated['sort'], ($validated['sort_order'] ?? 'asc'));
+        }
+        if (isset($validated['title'])) {
+            $dish->where('title', 'iLike', '%' . $validated['title'] . '%');
+        }
+        if (isset($validated['compound'])) {
+            $dish->where('compound', 'iLike', '%' . $validated['compound'] . '%');
+        }
+
+        $dishes= $dish->paginate(perPage: $validated['perPage'], page:  $validated['page'])->withQueryString();
+
+        return DishResource::collection($dishes);
     }
 
-    public function store(DishRequest $request, DishAction $action): DishResource
+    public function store(DishRequest $request): DishResource
     {
         $validated = $request->validated();
-        $dish = $action->store($validated, Dish::class);
+
+        $category = Category::where('id', $validated['category_id'])->firstOrFail();
+        $path = Storage::disk('public')->putFile('uploads', $validated['file']);
+
+        $file = File::create(['path' => $path]);
+        $dish = Dish::create([
+            'title' => $validated['title'],
+            'compound' => $validated['compound'],
+            'price' => $validated['price'],
+            'calories' => $validated['calories'],
+            'category_id' => $category->id,
+            'file_id' => $file->id,
+        ]);
 
         return new DishResource($dish);
     }
 
-    public function show($id, DishAction $action): DishResource
+    public function show($id): DishResource
     {
-        $dish = $action->show($id, Dish::class);
+        $dish = Dish::findOrFail($id);
 
         return new DishResource($dish);
     }
 
-    public function update(UpdateDishRequest $request, Dish $dish, DishAction $action): DishResource
+    public function update(UpdateDishRequest $request, Dish $dish): DishResource
     {
         $validated = $request->validated();
 
-        $dish = $action->update($validated, $dish);
+        if ($validated['file']) {
+            $path = Storage::disk('public')->putFile('uploads', $validated['file']);
+            Storage::disk('public')->delete($dish->file->path);
+            $dish->file->path = $path;
+            $dish->file->save();
+        }
+        $dish->update($validated);
 
         return new DishResource($dish);
     }
 
-    public function destroy(Dish $dish, DishAction $action): DishResource
+    public function destroy(Dish $dish): DishResource
     {
-        $dish = $action->destroy($dish);
+        $file = $dish->file;
+        Storage::disk('public')->delete($file->path);
+        $file->delete();
+        $dish->delete();
 
         return new DishResource($dish);
     }

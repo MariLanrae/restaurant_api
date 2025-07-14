@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\RoleAction;
 use App\Models\Role;
 use App\Http\Resources\RoleResource;
 use App\Http\Requests\RoleRequest;
@@ -10,40 +9,42 @@ use App\Http\Requests\RoleRequest;
 class RoleController extends Controller
 {
 
-    public function index(RoleRequest $request, RoleAction $action)
+    public function index(RoleRequest $request)
     {
         $validated = $request->validated();
-        $role = $action->index($validated);
+        $role = Role::query();
+        $role = $role->paginate(perPage: $validated['perPage'], page:  $validated['page'])->withQueryString();
 
         return RoleResource::collection($role);
     }
 
-    public function store(RoleRequest $request, RoleAction $action): RoleResource
+    public function store(RoleRequest $request): RoleResource
     {
         $validated = $request->validated();
-        $role = $action->store($validated);
+        $role = Role::create($validated);
 
         return new RoleResource($role);
     }
 
-    public function show($id, RoleAction $action)
+    public function show($id)
     {
-        $role = $action->show($id);
+        $role = Role::findOrFail($id);
 
         return new RoleResource($role);
     }
 
-    public function update(RoleRequest $request, Role $role, RoleAction $action): RoleResource
+    public function update(RoleRequest $request, Role $role): RoleResource
     {
         $validated = $request->validated();
-        $role = $action->update($validated, $role);
+
+        $role->update($validated);
 
         return new RoleResource($role);
     }
 
-    public function destroy(Role $role, RoleAction $action): RoleResource
+    public function destroy(Role $role): RoleResource
     {
-        $role = $action->destroy($role);
+        $role->delete();
 
         return new RoleResource($role);
     }

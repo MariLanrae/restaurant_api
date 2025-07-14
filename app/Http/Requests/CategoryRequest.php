@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\GetRule;
 use Illuminate\Foundation\Http\FormRequest;
 use InvalidArgumentException;
 
@@ -30,16 +29,9 @@ class CategoryRequest extends FormRequest
             ],
 
             'GET' => [
-                /*'title' => 'sometimes|string|max:255',
-                'search' => 'sometimes|string|in:title',
+                'title' => 'sometimes|string|max:255',
+                'search' => 'sometimes|string|in:search',
                 'sort_order' => 'sometimes|in:asc,desc',
-                'page' => 'sometimes|integer',
-                'perPage' => 'sometimes|integer',*/
-                'sort' => 'sometimes|string|in:title',
-                'sort_order' => 'sometimes|string|in:asc,desc',
-                'search' => 'sometimes|string|in:title',
-                'search_order' => ['bail','sometimes','string', new GetRule('App\Models\Category')
-                ],
                 'page' => 'sometimes|integer',
                 'perPage' => 'sometimes|integer',
             ],
