@@ -8,11 +8,12 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function createToken($user)
+    private function createToken($user)
     {
         return $user->createToken($user->name)->plainTextToken;
     }
@@ -35,7 +36,7 @@ class AuthController extends Controller
 
     public function waiterLogin($validated, $token)
     {
-        $role = Role::where('name', RoleEnum::Waiter)->firstOrFail();
+        $role = Role::where('name', RoleEnum::WAITER)->firstOrFail();
         $users = User::where('role_id', $role['id'])->get();
         foreach ($users as $user) {
             if (Hash::check($validated['pincode'], $user['pincode'])) {
@@ -45,7 +46,7 @@ class AuthController extends Controller
         return $token;
     }
 
-    function login(AuthLoginRequest $req)
+    public function login(AuthLoginRequest $req)
         {
             $token = null;
 
@@ -64,8 +65,6 @@ class AuthController extends Controller
                 }
             }
 
-           $token = $action->login($validated);
-
             if (!isset($token)) {
                 throw new AuthenticationException();
             }
@@ -74,9 +73,9 @@ class AuthController extends Controller
             }
         }
 
-        function logout(): JsonResponse
+        public function logout(): JsonResponse
         {
-            auth('api')->user()->currentAccessToken()->delete();
+            Auth::guard('sanctum')->user()->currentAccessToken()->delete();
 
             return response()->json(['message' => 'Logged out']);
         }
