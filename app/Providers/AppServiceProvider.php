@@ -22,7 +22,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Scramble::configure()
+            ->expose(
+                ui: '/documentation',
+                document: '/documentation.json',
+            );
+
         Scramble::routes(function (Route $route) {
             return Str::startsWith($route->uri, [
                 'users',
