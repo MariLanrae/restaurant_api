@@ -7,7 +7,7 @@ use App\Models\Dish;
 use App\Models\File;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\DishResource;
-use  App\Http\Requests\DishRequest;
+use App\Http\Requests\DishRequest;
 use App\Http\Requests\UpdateDishRequest;
 
 

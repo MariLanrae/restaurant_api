@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateCategoryRequest extends FormRequest
+class AuthLoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +22,9 @@ class UpdateCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes','string','max:255', Rule::unique('categories')->ignore($this->category->id)],
-            'file' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'email' => ['email', 'nullable'],
+            'password' => ['string'],
+            'pincode' => ['string', 'required_without_all:email,password'],
         ];
     }
 }

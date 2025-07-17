@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use App\Models\User;
 use App\Http\Resources\UserResource;
-use  App\Http\Requests\UserRequest;
+use App\Http\Requests\UserRequest;
 
 class UserController extends Controller
 {
@@ -24,10 +24,10 @@ class UserController extends Controller
             }
             elseif ($validated['search'] == 'email') {
                 $user = $user->where('email', 'iLike', '%' . $validated['search_order'] . '%');
-        }
+            }
         }
         if (isset($validated['sort'])) {
-             $user = $user->orderBy($validated['sort'], ($validated['sort_order'] ?? 'asc'));
+            $user = $user->orderBy($validated['sort'], ($validated['sort_order'] ?? 'asc'));
         }
         $user = $user->paginate(perPage: $validated['perPage'], page:  $validated['page'])->withQueryString();
 

@@ -24,9 +24,6 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $search =  $this->input('search');
-        $search_order =  $this->input('search_order');
-
         return match ($this->method()){
             'POST' => [
                 'name' => 'required|string',

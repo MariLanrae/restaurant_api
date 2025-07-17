@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Http\Resources\RoleResource;
-use  App\Http\Requests\RoleRequest;
+use App\Http\Requests\RoleRequest;
 
 class RoleController extends Controller
 {

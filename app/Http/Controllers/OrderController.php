@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Dish;
 use App\Models\Order;
 use App\Http\Resources\OrderResource;
-use  App\Http\Requests\OrderRequest;
+use App\Http\Requests\OrderRequest;
 use Carbon\Carbon;
 
 class OrderController extends Controller

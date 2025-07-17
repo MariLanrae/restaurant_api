@@ -20,7 +20,7 @@ class SuperAdminSeeder extends Seeder
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
             'pincode' => '12345',
-            'role_id' => Role::where('name', 'Super admin')->first()->id,
+            'role_id' => Role::where('name', 'super_admin')->first()->id,
         ]);
     }
 }
