@@ -35,7 +35,7 @@ class LoginAction
 
     public function waiterLogin($validated, $token)
     {
-        $role = Role::where('name', RoleEnum::Waiter)->firstOrFail();
+        $role = Role::where('name', RoleEnum::WAITER)->firstOrFail();
         $users = User::where('role_id', $role['id'])->get();
         foreach ($users as $user) {
             if (Hash::check($validated['pincode'], $user['pincode'])) {
