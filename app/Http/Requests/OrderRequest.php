@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\GetRule;
 use Illuminate\Foundation\Http\FormRequest;
 use InvalidArgumentException;
 
@@ -24,11 +25,18 @@ class OrderRequest extends FormRequest
     {
         return match ($this->method()){
             'GET' => [
-                'number' => 'sometimes|string',
+                /*'number' => 'sometimes|string',
                 'closing_date' => 'sometimes|date',
                 'user_id' => 'sometimes|int|exists:users,id',
                 'sort_order' => 'sometimes|in:asc,desc',
                 'sort' => 'sometimes|in:number,closing_date,user_id',
+                'page' => 'sometimes|integer',
+                'perPage' => 'sometimes|integer',*/
+                'sort' => 'sometimes|string|in:number,closing_date,user_id',
+                'sort_order' => 'sometimes|string|in:asc,desc',
+                'search' => 'sometimes|string|in:number,closing_date,user_id',
+                'search_order' => ['bail','sometimes','string', new GetRule('App\Models\Order')
+                ],
                 'page' => 'sometimes|integer',
                 'perPage' => 'sometimes|integer',
             ],
