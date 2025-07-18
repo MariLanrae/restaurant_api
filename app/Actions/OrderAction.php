@@ -16,7 +16,7 @@ class OrderAction extends BasicAction
         return Order::class;
     }
 
-    public function store($validated, $model = Order::class)
+    public function store($validated)
     {
         $number = $validated['number'].'--'.$validated['user_id'].'-'.uniqid();
         if ($validated['status'] == 'open') {
@@ -32,16 +32,16 @@ class OrderAction extends BasicAction
             'status' => $validated['status'],
             'creation_date' => Carbon::now()->format('Y-m-d H:i:s'),
         ];
-        $order = parent::store($valid, $model);
+        $order = Order::create($valid);
 
-        $titles = array_column($validated['dishes'], 'title');
-        $dishes = Dish::whereIn('title', $titles)->get()->keyBy('title');
-        foreach ($validated['dishes'] as $dishesData) {
-            $dish = $dishes->get($dishesData['title']);
-            if ($dish) {
-                $order->dishes()->attach($dish->id, ['quantity' => $dishesData['quantity']]);
-            }
-        }
+        $id = array_column($validated['dishes'], 'id');
+        $quantity = array_column($validated['dishes'], 'quantity', 'quantity');
+        $dishes = array_combine($id, array_map(function($quan) {
+            return ['quantity' => $quan];
+        }, $quantity));
+
+        $order->dishes()->sync($dishes);
+
         return $order;
     }
 }

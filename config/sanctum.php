@@ -14,7 +14,13 @@ return [
     | and production domains which access your API via a frontend SPA.
     |
     */
-    'stateful' => [],
+
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
+        '%s%s',
+        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
+        Sanctum::currentApplicationUrlWithPort(),
+    // Sanctum::currentRequestHost(),
+    ))),
 
     /*
     |--------------------------------------------------------------------------
@@ -28,7 +34,7 @@ return [
     |
     */
 
-    'guard' => ['api'],
+    'guard' => ['web'],
 
     /*
     |--------------------------------------------------------------------------
@@ -41,7 +47,7 @@ return [
     |
     */
 
-    'expiration' => 180,
+    'expiration' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -68,9 +74,10 @@ return [
     | request. You may change the middleware listed below as required.
     |
     */
+
     'middleware' => [
-        'authenticate_session' => null,
-        'encrypt_cookies' => null,
-        'validate_csrf_token' => null,
+        'encrypt_cookies' => Illuminate\Cookie\Middleware\EncryptCookies::class,
+        'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
     ],
+
 ];

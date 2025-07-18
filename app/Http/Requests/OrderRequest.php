@@ -25,13 +25,6 @@ class OrderRequest extends FormRequest
     {
         return match ($this->method()){
             'GET' => [
-                /*'number' => 'sometimes|string',
-                'closing_date' => 'sometimes|date',
-                'user_id' => 'sometimes|int|exists:users,id',
-                'sort_order' => 'sometimes|in:asc,desc',
-                'sort' => 'sometimes|in:number,closing_date,user_id',
-                'page' => 'sometimes|integer',
-                'perPage' => 'sometimes|integer',*/
                 'sort' => 'sometimes|string|in:number,closing_date,user_id',
                 'sort_order' => 'sometimes|string|in:asc,desc',
                 'search' => 'sometimes|string|in:number,closing_date,user_id',
@@ -45,7 +38,7 @@ class OrderRequest extends FormRequest
                 'user_id' => 'required|int|exists:users,id',
                 'status' => 'required|in:closed,open, canceled, paid',
                 'dishes' => 'required|array',
-                'dishes.*.title' => 'required|string|exists:dishes,title',
+                'dishes.*.id' => 'required|int|exists:dishes,id',
                 'dishes.*.quantity' => 'required|integer|min:1',
             ],
             'PUT' => [

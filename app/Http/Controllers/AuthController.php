@@ -17,9 +17,7 @@ class AuthController extends Controller
             if (!isset($token)) {
                 throw new AuthenticationException();
             }
-            else{
-                return ['token' => $token];
-            }
+            return ['token' => $token];
         }
 
         function logout(): JsonResponse

@@ -33,7 +33,7 @@ abstract class BasicAction
         if(isset($validated['file'])) {
             $path = Storage::disk('public')->putFile('uploads', $validated['file']);
             $file = File::create(['path' => $path]);
-            $validated['file'] = $file->id;
+            $validated['file_id'] = $file->id;
         }
         return $this->getModel()::create($validated);
     }

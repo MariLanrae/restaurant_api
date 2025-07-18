@@ -33,7 +33,7 @@ class GetRule implements ValidationRule, DataAwareRule
         $exists = ($this->model)::where($searchField, $value)->exists();
 
         if (!$exists) {
-            $fail('Запись с указанными параметрами не найдена.');
+            $fail(trans('validation.custom.get_rule.not_found'));
         }
     }
 }
