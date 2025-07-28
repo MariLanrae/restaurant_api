@@ -5,6 +5,7 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Support\Facades\Schema;
 
 class GetRule implements ValidationRule, DataAwareRule
 {
@@ -27,9 +28,10 @@ class GetRule implements ValidationRule, DataAwareRule
     {
         $searchField = $this->data['search'] ?? null;
 
-        if (!$searchField) {
+        if (!$searchField || !Schema::hasColumn((new $this->model)->getTable(), $searchField)) {
             return;
         }
+
         $exists = ($this->model)::where($searchField, $value)->exists();
 
         if (!$exists) {

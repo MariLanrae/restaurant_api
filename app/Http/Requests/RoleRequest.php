@@ -25,8 +25,8 @@ class RoleRequest extends FormRequest
     {
         return match ($this->method()){
             'GET' => [
-                'page' => 'sometimes|integer',
-                'perPage' => 'sometimes|integer',
+                'page' => 'required|integer',
+                'perPage' => 'required|integer',
             ],
             'POST', => [
                 'name' => 'required|string|max:255|unique:roles',

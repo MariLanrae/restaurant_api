@@ -43,7 +43,7 @@ abstract class BasicAction
         return $this->getModel()::findOrFail($id);
     }
 
-    public function update($id, $validated)
+    public function update($validated, $id)
     {
         if (isset($id->file_id) && isset($validated['file'])) {
             $path = Storage::disk('public')->putFile('uploads', $validated['file']);

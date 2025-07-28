@@ -43,8 +43,8 @@ class UserRequest extends FormRequest
                 'sort_order' => 'sometimes|string|in:asc,desc',
                 'search_order' => ['bail','sometimes','string', new GetRule('App\Models\User')
                 ],
-                'page' => 'sometimes|integer',
-                'perPage' => 'sometimes|integer',
+                'page' => 'required|integer',
+                'perPage' => 'required|integer',
             ],
             default => throw new InvalidArgumentException("Invalid request method [{$this->method()}]")
         };
