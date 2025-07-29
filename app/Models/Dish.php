@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
+
 /**
  * @method static create(array $all)
  * @method static where(string $string, mixed $role_id)
