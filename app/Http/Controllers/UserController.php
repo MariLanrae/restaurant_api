@@ -38,7 +38,7 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        $user = $action->update($user, $validated);
+        $user = $action->update($validated, $user);
 
         return new UserResource($user);
     }

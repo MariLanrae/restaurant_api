@@ -32,11 +32,11 @@ class CategoryRequest extends FormRequest
             'GET' => [
                 'sort' => 'sometimes|string|in:title',
                 'sort_order' => 'sometimes|string|in:asc,desc',
-                'search' => 'sometimes|string|in:title',
+                'search' => 'sometimes|in:title',
                 'search_order' => ['bail','sometimes','string', new GetRule('App\Models\Category')
                 ],
-                'page' => 'sometimes|integer',
-                'perPage' => 'sometimes|integer',
+                'page' => 'required|integer',
+                'perPage' => 'required|integer',
             ],
             default => throw new InvalidArgumentException("Invalid request method [{$this->method()}]")
         };

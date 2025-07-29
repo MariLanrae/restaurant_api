@@ -6,6 +6,8 @@ use App\Http\Requests\AuthLoginRequest;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use App\Actions\LoginAction;
+use Illuminate\Support\Facades\Auth;
+
 class AuthController extends Controller
 {
     function login(AuthLoginRequest $req, LoginAction $action)
@@ -22,7 +24,7 @@ class AuthController extends Controller
 
         function logout(): JsonResponse
         {
-            auth('api')->user()->currentAccessToken()->delete();
+            Auth::guard('sanctum')->user()->currentAccessToken()->delete();
 
             return response()->json(['message' => 'Logged out']);
         }

@@ -38,8 +38,8 @@ class DishRequest extends FormRequest
                 'search' => 'sometimes|string|in:compound,title',
                 'search_order' => ['bail','sometimes','string', new GetRule('App\Models\Dish')
                     ],
-                'page' => 'sometimes|integer',
-                'perPage' => 'sometimes|integer',
+                'page' => 'required|integer',
+                'perPage' => 'required|integer',
             ],
             default => throw new InvalidArgumentException("Invalid request method [{$this->method()}]")
         };
