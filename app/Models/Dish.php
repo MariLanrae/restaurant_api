@@ -44,4 +44,9 @@ class Dish extends Model
     {
         return $this->belongsToMany(Order::class)->withPivot('quantity');
     }
+
+    public static function getRelationshipsForEagerLoading(): array
+    {
+        return ['category', 'file'];
+    }
 }

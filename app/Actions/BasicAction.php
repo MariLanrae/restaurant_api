@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Models\File;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 abstract class BasicAction
@@ -16,6 +17,10 @@ abstract class BasicAction
     public function index($validated)
     {
         $models = ($this->getModel())::query();
+
+        if (method_exists($this->getModel(), 'getRelationshipsForEagerLoading')) {
+            $models->with(($this->getModel())::getRelationshipsForEagerLoading());
+        }
 
         if (isset($validated['search'])) {
             $models = $models->where($validated['search'], 'iLike', '%' . $validated['search_order'] . '%');
@@ -60,8 +65,10 @@ abstract class BasicAction
     {
         if (isset($id->file_id)){
             $file = $id->file;
+            DB::transaction(function () use ($file){
+                $file->delete();
+            });
             Storage::disk('public')->delete($file->path);
-            $file->delete();
         }
         $id->delete();
 

@@ -23,10 +23,10 @@ class UpdateDishRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes','required','string','max:255', Rule::unique('dishes')->ignore($this->dish->id)],
-            'price' => 'sometimes|required|numeric',
-            'calories' => 'sometimes|required|numeric',
-            'file' => 'sometimes|required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'title' => ['sometimes','string','max:255', Rule::unique('dishes')->ignore($this->dish->id)],
+            'price' => 'sometimes|numeric',
+            'calories' => 'sometimes|numeric',
+            'file' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'compound' => 'sometimes|string',
         ];
     }

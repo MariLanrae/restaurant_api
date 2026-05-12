@@ -71,4 +71,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+
+    public static function getRelationshipsForEagerLoading(): array
+    {
+        return ['role', 'order'];
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-use App\Models\Dish;
+use App\Enums\OrderEnum;
 use App\Models\Order;
 use Carbon\Carbon;
 
@@ -19,7 +19,7 @@ class OrderAction extends BasicAction
     public function store($validated)
     {
         $number = $validated['number'].'--'.$validated['user_id'].'-'.uniqid();
-        if ($validated['status'] == 'open') {
+        if ($validated['status'] == OrderEnum::OPEN) {
             $closing_date = null;
         }
         else {

@@ -37,4 +37,9 @@ class Order extends Model
     {
         return $this->belongsToMany(Dish::class)->withPivot('quantity');
     }
+
+    public static function getRelationshipsForEagerLoading(): array
+    {
+        return ['dish', 'user'];
+    }
 }

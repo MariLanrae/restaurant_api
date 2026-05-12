@@ -33,4 +33,9 @@ class Category extends Model
     {
         return $this->hasMany(Dish::class);
     }
+
+    public static function getRelationshipsForEagerLoading(): array
+    {
+        return ['dish', 'file'];
+    }
 }

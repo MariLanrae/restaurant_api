@@ -24,4 +24,9 @@ class Role extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public static function getRelationshipsForEagerLoading(): array
+    {
+        return ['user'];
+    }
 }
